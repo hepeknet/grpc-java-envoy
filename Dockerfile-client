@@ -1,0 +1,7 @@
+FROM openjdk:8u121-jdk
+
+ADD target/grpc-test-0.0.1-SNAPSHOT.jar /usr/local/
+ADD src/main/resources/startClient.sh /usr/local/
+RUN chmod +x /usr/local/startClient.sh
+
+CMD ["/usr/local/startClient.sh"]

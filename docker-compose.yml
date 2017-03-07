@@ -1,0 +1,29 @@
+version: '2'
+services:
+
+  grpc-server:
+    build:
+      context: .
+      dockerfile: Dockerfile-server
+    expose:
+      - "50051"
+
+  envoy-server:
+    image: lyft/envoy
+    volumes:
+      - ./envoy/grpc-server.json:/etc/grpc-server.json
+    command: /usr/local/bin/envoy -c /etc/grpc-server.json
+    links:
+      - "grpc-server"
+
+  grpc-client:
+    build:
+      context: .
+      dockerfile: Dockerfile-client
+    environment:
+    - REPETITIONS=10
+    - SERVER_PORT=9211
+    - SERVER_ADDR=envoy-server
+    - RPC_USER=Hepek
+    links:
+      - "envoy-server"
